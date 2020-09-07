@@ -14,24 +14,32 @@ module OmniAuth
 
       option :authorize_options, %i[scope permissions]
 
-      uid { raw_info['id'] }
+      uid { user_info['id'] }
 
       info do
         {
-          name: raw_info['username'],
-          email: raw_info['verified'] ? raw_info['email'] : nil,
-          image: "https://cdn.discordapp.com/avatars/#{raw_info['id']}/#{raw_info['avatar']}"
+          name: user_info['username'],
+          email: user_info['verified'] ? user_info['email'] : nil,
+          image: "https://cdn.discordapp.com/avatars/#{user_info['id']}/#{user_info['avatar']}"
         }
       end
 
       extra do
         {
-          'raw_info' => raw_info
+          raw_info: {
+            user_info: user_info,
+            web_hook_info: web_hook_info
+          }
         }
       end
 
-      def raw_info
-        @raw_info ||= access_token.get('users/@me').parsed
+      def user_info
+        @user_info ||= access_token.get('users/@me').parsed
+      end
+
+      def web_hook_info
+        return {} unless access_token.params.key? 'webhook'
+        access_token.params['webhook']
       end
 
       def callback_url
