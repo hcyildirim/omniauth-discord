@@ -26,10 +26,8 @@ module OmniAuth
 
       extra do
         {
-          raw_info: {
-            user_info: user_info,
-            web_hook_info: web_hook_info
-          }
+          raw_info: user_info,
+          web_hook_info: web_hook_info
         }
       end
 
